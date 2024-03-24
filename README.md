@@ -1,6 +1,6 @@
 # Binary Search Tree (BST) with ReactJS library
 
-This project is built for serving the exercise on the university
+This project is built for serving the exercise in the university
 
 ## How to run this project
 
