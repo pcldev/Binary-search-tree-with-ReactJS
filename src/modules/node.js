@@ -174,16 +174,21 @@ export class BST {
   }
 
   getHeight() {
-    return this._getHeightRecursive(this.root);
+    return this._maxDepth(this.root);
   }
 
-  _getHeightRecursive(node) {
-    if (node === null) {
-      return -1;
-    } else {
-      const leftHeight = this._getHeightRecursive(node.left);
-      const rightHeight = this._getHeightRecursive(node.right);
-      return 1 + Math.max(leftHeight, rightHeight);
+  _maxDepth(node) {
+    if (node == null) return 0;
+    else {
+      let leftDept = this._maxDepth(node.left);
+      let rightDept = this._maxDepth(node.right);
+
+      if (leftDept > rightDept) {
+        // 1 is the root
+        return leftDept + 1;
+      } else {
+        return rightDept + 1;
+      }
     }
   }
 }

@@ -173,15 +173,19 @@ const App = () => {
                 Search
               </Button>
             </div>
-            <Typography.Title level={5} style={{ textAlign: "left" }}>
-              Click on the specific node to delete this node{" "}
+            <Typography.Title
+              level={5}
+              style={{ textAlign: "left", fontStyle: "italic" }}
+            >
+              Delete Node: Click on the specific node to delete this node{" "}
             </Typography.Title>
 
-            <Typography.Title level={5} style={{ textAlign: "left" }}>
+            <hr />
+            <Typography.Title level={5} style={{ textAlign: "right" }}>
               Nodes: {bst.countNodes()}
             </Typography.Title>
 
-            <Typography.Title level={5} style={{ textAlign: "left" }}>
+            <Typography.Title level={5} style={{ textAlign: "right" }}>
               Height of tree: {bst.getHeight()}
             </Typography.Title>
           </div>
