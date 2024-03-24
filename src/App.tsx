@@ -20,7 +20,8 @@ INITIAL_BST.insert(14);
 const App = () => {
   const [bst, setBst] = useState(INITIAL_BST);
   const [value, setValue] = useState("");
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState<number>();
+  const [deleteValue, setDeleteValue] = useState<number>();
 
   const handleInsert = () => {
     const val = parseInt(value, 10);
@@ -37,7 +38,8 @@ const App = () => {
   };
 
   const handleDelete = (val) => {
-    const result = bst.delete(val);
+    console.log("val: ", val);
+    const result = bst.delete(+val);
     const { bst: _bst, status, message } = result;
 
     if (!status) {
@@ -49,9 +51,8 @@ const App = () => {
   };
 
   const handleSearch = () => {
-    const val = parseInt(searchValue, 10);
-    if (!isNaN(val)) {
-      const result = bst.search(val);
+    if (!isNaN(searchValue)) {
+      const result = bst.search(searchValue);
       const { node, parent, steps } = result;
 
       addSteps(steps);
@@ -63,7 +64,11 @@ const App = () => {
   };
 
   const handleSearchChange = (e) => {
-    setSearchValue(e.target.value);
+    setSearchValue(+e.target.value);
+  };
+
+  const handleDeleteChange = (e) => {
+    setDeleteValue(+e.target.value);
   };
 
   async function traverseTheSearchNode(nameVal, step, circle) {
@@ -171,6 +176,32 @@ const App = () => {
 
               <Button type="primary" onClick={handleSearch}>
                 Search
+              </Button>
+            </div>
+            <br />
+            <Typography.Title
+              level={5}
+              style={{ textAlign: "left", marginTop: "0px" }}
+            >
+              Delete Node
+            </Typography.Title>
+            <div className="flex h-m-c g-10">
+              <Input
+                aria-label="Delete Node"
+                type="number"
+                autoFocus
+                value={deleteValue}
+                onChange={handleDeleteChange}
+                onKeyDown={(e) => {
+                  if (e.code === "Enter") {
+                    handleDelete(deleteValue);
+                  }
+                }}
+                placeholder="Enter Node Value To Delete"
+              />
+
+              <Button type="primary" onClick={() => handleDelete(deleteValue)}>
+                Delete
               </Button>
             </div>
             <Typography.Title
