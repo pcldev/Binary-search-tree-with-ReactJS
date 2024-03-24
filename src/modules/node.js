@@ -7,28 +7,41 @@ export class Node {
 }
 
 export class BST {
-  constructor() {
-    this.root = null;
+  constructor(_root) {
+    this.root = _root || null;
   }
 
   insert(_val) {
+    const steps = [];
     const { node: searchedNode } = this.search(_val);
-    if (searchedNode) return;
+    if (searchedNode) {
+      return {
+        steps,
+        status: false,
+        message: "Node has already existed",
+      };
+    }
 
     let node = new Node(_val);
     if (this.root == null) {
       this.root = node;
+
       return;
     }
     let prev = null;
     let temp = this.root;
+    steps.push(temp);
     while (temp != null) {
       if (temp.val > _val) {
         prev = temp;
         temp = temp.left;
+
+        steps.push(temp);
       } else if (temp.val < _val) {
         prev = temp;
         temp = temp.right;
+
+        steps.push(temp);
       } else {
         temp = null;
       }
@@ -36,6 +49,12 @@ export class BST {
 
     if (prev.val > _val) prev.left = node;
     else prev.right = node;
+
+    return {
+      steps,
+      status: true,
+      message: "Insert node successfully",
+    };
   }
 
   search(_val) {
@@ -75,14 +94,22 @@ export class BST {
     const { node, parent } = this.search(_val);
 
     if (node === null) {
-      return "Node not found";
+      return {
+        bst: this,
+        status: false,
+        message: "Node node found",
+      };
     }
 
     // Case 1: No child or only one child
     if (node.left === null) {
       if (parent === null) {
         this.root = node.right;
-        return { root: this.root };
+        return {
+          bst: this,
+          status: true,
+          message: "Delete node successfully",
+        };
       } else if (parent.left === node) {
         parent.left = node.right;
       } else {
@@ -91,7 +118,11 @@ export class BST {
     } else if (node.right === null) {
       if (parent === null) {
         this.root = node.left;
-        return { root: this.root };
+        return {
+          bst: this,
+          status: true,
+          message: "Delete node successfully",
+        };
       } else if (parent.left === node) {
         parent.left = node.left;
       } else {
@@ -119,6 +150,40 @@ export class BST {
       }
     }
 
-    return { root: this.root };
+    return {
+      bst: this,
+      status: true,
+      message: "Delete node successfully",
+    };
+  }
+
+  countNodes() {
+    return this._countNodesRecursive(this.root);
+  }
+
+  _countNodesRecursive(node) {
+    if (node === null) {
+      return 0;
+    } else {
+      return (
+        1 +
+        this._countNodesRecursive(node.left) +
+        this._countNodesRecursive(node.right)
+      );
+    }
+  }
+
+  getHeight() {
+    return this._getHeightRecursive(this.root);
+  }
+
+  _getHeightRecursive(node) {
+    if (node === null) {
+      return -1;
+    } else {
+      const leftHeight = this._getHeightRecursive(node.left);
+      const rightHeight = this._getHeightRecursive(node.right);
+      return 1 + Math.max(leftHeight, rightHeight);
+    }
   }
 }

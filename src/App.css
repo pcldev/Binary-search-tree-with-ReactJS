@@ -99,6 +99,10 @@
   gap: 10px;
 }
 
+.g-20 {
+  gap: 20px;
+}
+
 .g-50 {
   gap: 50px;
 }
@@ -129,4 +133,20 @@ body {
 
 .traversing {
   fill: cyan !important;
+}
+
+.b-1px {
+  border: 1px solid #ccc;
+}
+
+.w-70 {
+  width: 70%;
+}
+
+.w-30 {
+  width: 30%;
+}
+
+.p-20 {
+  padding: 20px;
 }

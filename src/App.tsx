@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Input } from "antd";
+import { Button, Input, Typography } from "antd";
 import { useEffect, useState } from "react";
 import Tree, { RawNodeDatum } from "react-d3-tree";
 import "./App.css";
@@ -21,21 +21,31 @@ const App = () => {
   const [bst, setBst] = useState(INITIAL_BST);
   const [value, setValue] = useState("");
   const [searchValue, setSearchValue] = useState("");
-  const [steps, setSteps] = useState([]);
 
   const handleInsert = () => {
     const val = parseInt(value, 10);
     if (!isNaN(val)) {
-      bst.insert(val);
+      const result = bst.insert(val);
+      const { steps, status, message } = result;
+      if (!status) {
+        alert(message);
+        return;
+      }
       setBst(bst);
       setValue("");
     }
   };
 
   const handleDelete = (val) => {
-    const _bst = bst.delete(val);
-    console.log("bst", _bst);
-    setBst(_bst);
+    const result = bst.delete(val);
+    const { bst: _bst, status, message } = result;
+
+    if (!status) {
+      alert(message);
+    }
+    const newBST = new BST(_bst.root);
+    setBst(newBST);
+    setValue("");
   };
 
   const handleSearch = () => {
@@ -44,7 +54,7 @@ const App = () => {
       const result = bst.search(val);
       const { node, parent, steps } = result;
 
-      setSteps(steps);
+      addSteps(steps);
     }
   };
 
@@ -74,7 +84,7 @@ const App = () => {
     });
   }
 
-  useEffect(() => {
+  function addSteps(steps) {
     const gTags = [...document.querySelectorAll("g")];
     let isNotFound = false;
 
@@ -100,48 +110,84 @@ const App = () => {
           }
         });
     })();
-  }, [steps]);
+  }
 
   return (
-    <div className="App">
-      <div className="flex g-50 w-100 fl-di-col">
-        <div className="flex h-m-c g-10">
-          <Input
-            type="number"
-            autoFocus
-            value={value}
-            onChange={handleInsertChange}
-            onKeyDown={(e) => {
-              if (e.code === "Enter") {
-                handleInsert();
-              }
-            }}
-            placeholder="Enter Node Value"
-          />
-          <Button type="primary" onClick={handleInsert}>
-            Insert
-          </Button>
+    <>
+      <Typography.Title level={1}>Binary Search Tree</Typography.Title>
+      <div className="App">
+        <div className="flex g-20 w-100">
+          <div className="b-1px w-70">
+            <BSTVisualizer bst={bst} handleDelete={handleDelete} />
+          </div>
+
+          <div className="b-1px w-30 p-20">
+            <Typography.Title
+              level={5}
+              style={{ textAlign: "left", marginTop: "0px" }}
+            >
+              Insert Node
+            </Typography.Title>
+            <div className="flex h-m-c g-10">
+              <Input
+                aria-label="Insert Node"
+                type="number"
+                autoFocus
+                value={value}
+                onChange={handleInsertChange}
+                onKeyDown={(e) => {
+                  if (e.code === "Enter") {
+                    handleInsert();
+                  }
+                }}
+                placeholder="Enter Node Value"
+              />
+
+              <Button type="primary" onClick={handleInsert}>
+                Insert
+              </Button>
+            </div>
+            <br />
+            <Typography.Title
+              level={5}
+              style={{ textAlign: "left", marginTop: "0px" }}
+            >
+              Search Node
+            </Typography.Title>
+            <div className="flex h-m-c g-10">
+              <Input
+                aria-label="Search Node"
+                type="number"
+                autoFocus
+                value={searchValue}
+                onChange={handleSearchChange}
+                onKeyDown={(e) => {
+                  if (e.code === "Enter") {
+                    handleSearch();
+                  }
+                }}
+                placeholder="Enter Node Value"
+              />
+
+              <Button type="primary" onClick={handleSearch}>
+                Search
+              </Button>
+            </div>
+            <Typography.Title level={5} style={{ textAlign: "left" }}>
+              Click on the specific node to delete this node{" "}
+            </Typography.Title>
+
+            <Typography.Title level={5} style={{ textAlign: "left" }}>
+              Nodes: {bst.countNodes()}
+            </Typography.Title>
+
+            <Typography.Title level={5} style={{ textAlign: "left" }}>
+              Height of tree: {bst.getHeight()}
+            </Typography.Title>
+          </div>
         </div>
-        <div className="flex h-m-c g-10">
-          <Input
-            type="number"
-            autoFocus
-            value={searchValue}
-            onChange={handleSearchChange}
-            onKeyDown={(e) => {
-              if (e.code === "Enter") {
-                handleSearch();
-              }
-            }}
-            placeholder="Enter Node Value"
-          />
-          <Button type="primary" onClick={handleSearch}>
-            Search
-          </Button>
-        </div>
-        <BSTVisualizer bst={bst} handleDelete={handleDelete} />
       </div>
-    </div>
+    </>
   );
 };
 
@@ -193,8 +239,8 @@ const BSTVisualizer = ({ bst, handleDelete }) => {
           }}
           translate={{
             x: document.getElementById("treeWrapper")
-              ? document.getElementById("treeWrapper").clientWidth / 2
-              : window.innerWidth / 2,
+              ? document.getElementById("treeWrapper").clientWidth / 3
+              : window.innerWidth / 3,
             y: document.getElementById("treeWrapper")
               ? document.getElementById("treeWrapper").clientHeight / 6
               : window.innerHeight / 6,
